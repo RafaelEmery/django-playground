@@ -1,0 +1,23 @@
+[project]
+name = "django-playground"
+version = "0.1.0"
+description = "Playground to practice Python/Django and other stuffs"
+authors = [
+    {name = "rafael.emerycade@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "django (>=5.2.4,<6.0.0)",
+    "djangorestframework (>=3.16.0,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.2.0"
+ruff = "^0.12.7"
+
