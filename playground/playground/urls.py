@@ -18,6 +18,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from .views import are_you_ok
+
 urlpatterns = [
+    path('ping/', are_you_ok),
     path("admin/", admin.site.urls),
 ]

@@ -2,7 +2,7 @@
 
 Repository to build and practice Python, Django and a lot of other stuffs :hammer:
 
-## Techs :bulb:
+## :bulb: Techs
 
 - Python
 - Poetry
@@ -10,7 +10,7 @@ Repository to build and practice Python, Django and a lot of other stuffs :hamme
 - PostgreSQL
 - Docker and Docker Compose
 
-## Running locally :running:
+## :running: Running locally 
 
 #### Handling containers and environment
 
@@ -58,11 +58,11 @@ The `pre-commit` hooks fixes automatically and to fix manually:
 
     make lint-fix
 
-## Applications :open_file_folder:
+## :open_file_folder: Applications
 
 The goal of `django-playground` is to represent multiple applications and practices to learn about stuff and it also represents that monolithic application that everybody knows which does everything and have multiple contexts.
 
-### Payments :moneybag:
+### :moneybag:     Payments
 
 The Payments application is at `playground/payments`.
 
