@@ -23,3 +23,9 @@ build-backend = "poetry.core.masonry.api"
 pre-commit = "^4.2.0"
 ruff = "^0.12.7"
 
+[tool.ruff]
+select = ["E", "F", "W", "I", "DJ"]
+ignore = []
+line-length = 100
+target-version = "py311"
+

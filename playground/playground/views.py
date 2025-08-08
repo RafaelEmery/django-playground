@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 
+
 def are_you_ok(request):
     yes = [
         ["Uma vez Flamengo", "Sempre Flamengo"],

@@ -66,7 +66,7 @@ The goal of `django-playground` is to represent multiple applications and practi
 
 The Payments application is at `playground/payments`.
 
-For more details take a look at `payments/README.md`
+For more details take a look at [payments docs](./playground/payments/README.md)
 
 ---
 Made with :heart: for studies by [RafaelEmery](https://github.com/RafaelEmery)

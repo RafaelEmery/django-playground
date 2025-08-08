@@ -21,5 +21,11 @@ dep-down:
 run:
 	poetry run python playground/manage.py runserver
 
+shell:
+	poetry run python playground/manage.py shell
+
+create-migrations:
+	poetry run python playground/manage.py makemigrations
+
 migrate:
 	poetry run python playground/manage.py migrate
