@@ -1,3 +1,5 @@
+from enum import StrEnum
+
 from django.db import models
 
 
@@ -30,3 +32,7 @@ class Status(models.TextChoices):
 class CustomerType(models.TextChoices):
     INDIVIDUAL = "individual"
     CORPORATE = "corporate"
+
+class DocumentType(StrEnum):
+    CPF = "CPF"
+    CNPJ = "CNPJ"

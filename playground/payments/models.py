@@ -15,7 +15,7 @@ class BaseModel(models.Model):
         abstract = True
 
     def __str__(self):
-        return self.id.__str__
+        return str(self.id)
 
 class BalanceValues(BaseModel):
     """
