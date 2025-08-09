@@ -3,4 +3,29 @@ repos:
   rev: v0.12.7
   hooks:
     - id: ruff-check
+      name: "🐍 python · Format with Ruff"
       args: [ --fix ]
+
+- repo: https://github.com/abravalheri/validate-pyproject
+  rev: v0.23
+  hooks:
+    - id: validate-pyproject
+      name: "🐍 python · Validate pyproject.toml"
+      additional_dependencies: ["validate-pyproject-schema-store[all]"]
+
+- repo: https://github.com/hukkin/mdformat
+  rev: 0.7.21
+  hooks:
+    - id: mdformat
+      name: "📝 markdown · Format markdown"
+      additional_dependencies:
+        - mdformat-gfm          # GitHub-Flavored Markdown support
+        - mdformat-ruff         # Python code formatting
+        - mdformat-frontmatter  # YAML frontmatter support
+        - ruff                  # Required for mdformat-ruff
+
+- repo: https://github.com/mrtazz/checkmake.git
+  rev: 0.2.2
+  hooks:
+    - id: checkmake
+      name: "🐮 Makefile · Lint Makefile"

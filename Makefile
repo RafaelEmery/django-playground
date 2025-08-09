@@ -1,3 +1,5 @@
+.PHONY: all clean test
+
 lint:
 	@echo "Running linters... 🔍"
 	@poetry run ruff check
@@ -5,6 +7,10 @@ lint:
 lint-fix:
 	@echo "Fixing lint issues... ✏️"
 	@poetry run ruff check --fix
+
+pre-commit-test:
+	@echo "Testing pre-commit hooks... 📡"
+	poetry run pre-commit run --all-files
 
 dep-start:
 	@echo "Starting containers... 🆙"
