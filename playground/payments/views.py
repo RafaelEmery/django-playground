@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,6 +14,7 @@ class CustomerAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
+        logging.info(f"[payments] customer created: {serializer.data.get('id')}")
         return Response(
             data={"id": serializer.data.get("id")},
             status=status.HTTP_201_CREATED

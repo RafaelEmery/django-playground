@@ -12,6 +12,10 @@ pre-commit-test:
 	@echo "Testing pre-commit hooks... 📡"
 	poetry run pre-commit run --all-files
 
+clean-app-logs:
+	@echo "Removing general log file 🧹"
+	rm general.log
+
 dep-start:
 	@echo "Starting containers... 🆙"
 	@docker compose up -d
