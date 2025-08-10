@@ -10,7 +10,6 @@ class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     class Meta:
         abstract = True
 
@@ -49,6 +48,7 @@ class Customer(BaseModel):
     name = models.CharField(max_length=255)
     type = models.CharField(choices=CustomerType)
     document_number = models.CharField(max_length=20, unique=True)
+    active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["id"]

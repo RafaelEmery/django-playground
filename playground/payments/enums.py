@@ -1,9 +1,9 @@
 from enum import StrEnum
 
-from django.db import models
+from django.db.models import TextChoices
 
 
-class Currency(models.TextChoices):
+class Currency(TextChoices):
     BRL = "BRL", "Brazilian Real"
     USD = "USD", "US Dollar"
     EUR = "EUR", "Euro"
@@ -17,19 +17,19 @@ class Currency(models.TextChoices):
     NZD = "NZD", "New Zealand Dollar"
 
 
-class TransactionMethod(models.TextChoices):
+class TransactionMethod(TextChoices):
     CREDIT = "credit_card"
     DEBIT = "debit_card"
 
 
-class Status(models.TextChoices):
+class Status(TextChoices):
     PROCESSED = "processed"
     FAILED = "failed"
     PENDING = "pending"
     WAITING_FUNDS = "waiting_funds"
 
 
-class CustomerType(models.TextChoices):
+class CustomerType(TextChoices):
     INDIVIDUAL = "individual"
     CORPORATE = "corporate"
 
