@@ -8,4 +8,4 @@ Simple PSP (Payment Service Provider) based on PagarMe backend developer challen
 
 ## Endpoints
 
-*To be defined*
+Defined at Swagger on `http://localhost:8000/swagger/`.

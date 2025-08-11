@@ -17,12 +17,30 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
 
 from .views import are_you_ok
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Django Playground",
+        default_version='v1',
+        description="Playground to practice Python/Django and other stuffs",
+        terms_of_service="https://flamengo.com.br",
+        contact=openapi.Contact(email="libertadores@flamengo.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+)
 
 urlpatterns = [
     path("ping/", are_you_ok),
     path("admin/", admin.site.urls),
+
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('swagger.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
 
     path("api/v1/payments/", include("payments.urls")),
 ]
