@@ -22,8 +22,8 @@ class BalanceValues(BaseModel):
         available and waiting_funds can't be more than 999.999.999,99
         no billionaires are allowed in this software ☠️🖕
     """
-    available = models.DecimalField(max_digits=13, decimal_places=2)
-    waiting_funds = models.DecimalField(max_digits=13, decimal_places=2)
+    available = models.DecimalField(max_digits=13, decimal_places=2, default=0.0)
+    waiting_funds = models.DecimalField(max_digits=13, decimal_places=2, default=0.0)
 
     class Meta:
         abstract = True

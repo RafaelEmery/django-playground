@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .enums import CustomerType
-from .models import Customer
+from .models import Balance, Customer
 from .utils import is_valid_cnpj, is_valid_cpf
 
 
@@ -26,4 +26,10 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = Customer
         fields = ["id", "name", "type", "document_number", "active", "created_at", "updated_at"]
         extra_kwargs = {"document_number": {"write_only": True}}
+
+
+class BalanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Balance
+        fields = ["id", "customer", "available", "waiting_funds", "updated_at"]
 

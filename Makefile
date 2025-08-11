@@ -28,7 +28,8 @@ dep-down:
 	@echo "Removing containers... 💀"
 	@docker compose down
 
-run:
+run: dep-start
+	@echo "Running application... 🏆"
 	poetry run python playground/manage.py runserver
 
 shell:
