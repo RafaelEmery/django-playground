@@ -25,7 +25,23 @@ pre-commit = "^4.2.0"
 ruff = "^0.12.7"
 
 [tool.ruff]
-select = ["E", "F", "W", "I", "DJ"]
+select = [
+    "E",    #	pycodestyle errors
+    "F",    #	pyflakes errors (unused imports, variables, etc)
+    "W",    #	pycodestyle warnings
+    "I",    #	Import sorting (isort)
+    "DJ",   #	Django-specific rules
+    "B",    #	Best practices (flake8-bugbear)
+    "C90",  #	Code complexity (mccabe)
+    "S",    #	Security rules (bandit)
+    "T20",  #	String formatting (flake8-printf)
+    "PT",   #	Test rules (pytest)
+    "N",    #	Variable and naming rules (pep8-naming)
+    "ERA",  #	Dead code (eradicate)
+    "Q",
+    "PL",
+    "SIM"
+]
 ignore = []
 line-length = 100
 target-version = "py311"

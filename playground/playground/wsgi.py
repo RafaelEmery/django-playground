@@ -1,5 +1,4 @@
-"""
-WSGI config for playground project.
+"""WSGI config for playground project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

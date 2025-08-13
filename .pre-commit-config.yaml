@@ -29,3 +29,10 @@ repos:
   hooks:
     - id: checkmake
       name: "🐮 Makefile · Lint Makefile"
+
+- repo: https://github.com/commitizen-tools/commitizen
+  rev: v3.24.0
+  hooks:
+    - id: commitizen
+      name: "💬 Commit · Validate commit message"
+      stages: [commit-msg]

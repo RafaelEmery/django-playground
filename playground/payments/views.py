@@ -16,11 +16,16 @@ class CustomerAPIView(APIView):
 
         return Response(serializer.data)
 
+    # TODO: validate and try to set transaction on customer and balance creation
     def post(self, request):
+        """
+        Creates a new customer with default balance.
+        """
         serializer = CustomerSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         customer = serializer.save()
 
+        # TODO: use signals/post_create or post_save function to create balance
         balance_serializer = BalanceSerializer(data={"customer": customer.id})
         balance_serializer.is_valid(raise_exception=True)
         balance = balance_serializer.save()
