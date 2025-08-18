@@ -10,9 +10,10 @@ from .serializers import BalanceSerializer, CustomerSerializer
 
 
 class CustomerAPIView(APIView):
-    def get(self, request, id):
-        customer = get_object_or_404(Customer, id=id)
-        serializer = CustomerSerializer(customer)
+    def get(self, request):
+        # TODO: include query params and query params validation
+        customers = Customer.objects.all()
+        serializer = CustomerSerializer(customers, many=True)
 
         return Response(serializer.data)
 
@@ -45,3 +46,23 @@ class CustomerAPIView(APIView):
         customer.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CustomerDetailAPIView(APIView):
+    def get(self, request, id):
+        customer = get_object_or_404(Customer, id=id)
+        serializer = CustomerSerializer(customer)
+
+        return Response(serializer.data)
+
+class CustomerBalanceAPIView(APIView):
+    def get(self, request, id):
+        balance = Balance.objects.filter(customer__id=id).first()
+        if not balance:
+            return Response(
+                {"detail": "Balance not found for this customer."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        serializer = BalanceSerializer(balance)
+
+        return Response(serializer.data)

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .enums import CustomerType, DocumentType
-from .models import Customer, Payable, Transaction
+from .models import Balance, Customer, Payable, Transaction
 
 
 @admin.register(Customer)
@@ -15,6 +15,17 @@ class CustomerAdmin(admin.ModelAdmin):
     def document_type(self, obj):
         return DocumentType.CPF if obj.type == CustomerType.INDIVIDUAL else DocumentType.CNPJ
 
+
+@admin.register(Balance)
+class BalanceAdmin(admin.ModelAdmin):
+    list_per_page = 10
+    list_display = ["id", "customer__name", "customer__active", "available", "has_waiting_funds"]
+    search_fields = ["id", "customer__name"]
+    list_filter = ["customer__active"]
+
+    @admin.display()
+    def has_waiting_funds(self, obj):
+        return obj.waiting_funds > 0.0
 
 
 @admin.register(Transaction)

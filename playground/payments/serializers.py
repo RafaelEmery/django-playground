@@ -29,6 +29,11 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 class BalanceSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer(many=False)
+    available_history = serializers.SerializerMethodField()
+
+    # TODO: get latest available value on history to calculate the difference
+
     class Meta:
         model = Balance
         fields = ["id", "customer", "available", "waiting_funds", "updated_at"]

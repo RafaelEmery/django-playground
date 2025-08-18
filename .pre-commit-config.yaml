@@ -30,9 +30,11 @@ repos:
     - id: checkmake
       name: "🐮 Makefile · Lint Makefile"
 
+# FIXME: pre-commit commitizen hook is not working properly
 - repo: https://github.com/commitizen-tools/commitizen
   rev: v3.24.0
   hooks:
     - id: commitizen
       name: "💬 Commit · Validate commit message"
       stages: [commit-msg]
+      additional_dependencies: [cz_conventional_commits]

@@ -38,11 +38,14 @@ select = [
     "PT",   #	Test rules (pytest)
     "N",    #	Variable and naming rules (pep8-naming)
     "ERA",  #	Dead code (eradicate)
-    "Q",
-    "PL",
-    "SIM"
+    "Q",    #	Quotes (flake8-quotes)
+    "PL",   #	Pylint rules
+    "SIM"   #	Code simplification (flake8-simplify)
 ]
 ignore = []
 line-length = 100
 target-version = "py311"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
 
