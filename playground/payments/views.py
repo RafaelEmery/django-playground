@@ -5,8 +5,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Balance, Customer
-from .serializers import BalanceSerializer, CustomerSerializer
+from .models import Balance, Customer, Transaction
+from .serializers import BalanceSerializer, CustomerSerializer, TransactionSerializer
 
 
 class CustomerAPIView(APIView):
@@ -64,5 +64,13 @@ class CustomerBalanceAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         serializer = BalanceSerializer(balance)
+
+        return Response(serializer.data)
+
+
+class TransactionAPIView(APIView):
+    def get(self, request):
+        transactions = Transaction.objects.all()
+        serializer = TransactionSerializer(transactions, many=True)
 
         return Response(serializer.data)

@@ -1,12 +1,11 @@
 from rest_framework import serializers
 
 from .enums import CustomerType
-from .models import Balance, Customer
+from .models import Balance, Customer, Transaction
 from .utils import is_valid_cnpj, is_valid_cpf
 
 
 class CustomerSerializer(serializers.ModelSerializer):
-
     def validate(self, attrs):
             if (
                 attrs.get("type") == CustomerType.INDIVIDUAL
@@ -30,7 +29,6 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 class BalanceSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer(many=False)
-    available_history = serializers.SerializerMethodField()
 
     # TODO: get latest available value on history to calculate the difference
 
@@ -38,3 +36,18 @@ class BalanceSerializer(serializers.ModelSerializer):
         model = Balance
         fields = ["id", "customer", "available", "waiting_funds", "updated_at"]
 
+
+class TransactionSerializer(serializers.ModelSerializer):
+    # TODO: get payable customer data
+
+    class Meta:
+        model = Transaction
+        fields = [
+            "id",
+            "value",
+            "description",
+            "method",
+            "status",
+            "expected_fee",
+            "created_at"
+        ]
