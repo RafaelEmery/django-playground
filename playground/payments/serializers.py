@@ -28,13 +28,16 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 
 class BalanceSerializer(serializers.ModelSerializer):
-    customer = CustomerSerializer(many=False)
+    customer_id = serializers.PrimaryKeyRelatedField(
+        queryset=Customer.objects.all(), write_only=True, source="customer"
+    )
+    customer = CustomerSerializer(read_only=True)
 
     # TODO: get latest available value on history to calculate the difference
 
     class Meta:
         model = Balance
-        fields = ["id", "customer", "available", "waiting_funds", "updated_at"]
+        fields = ["id", "customer_id", "customer", "available", "waiting_funds", "updated_at"]
 
 
 class TransactionSerializer(serializers.ModelSerializer):

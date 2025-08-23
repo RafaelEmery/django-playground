@@ -1,17 +1,17 @@
 from rest_framework.routers import path
 
 from .views import (
-    CustomerAPIView,
     CustomerBalanceAPIView,
     CustomerDetailAPIView,
-    TransactionAPIView,
+    CustomerListCreateAPIView,
+    TransactionListAPIView,
 )
 
 urlpatterns = [
-    path("customers/", CustomerAPIView.as_view(), name="customers"),
+    path("customers/", CustomerListCreateAPIView.as_view(), name="customers-list-create"),
     path("customers/<uuid:id>/", CustomerDetailAPIView.as_view(), name="customer-details"),
     path("customers/<uuid:id>/balance/", CustomerBalanceAPIView.as_view(), name="customer-balance"),
-    path("transactions/", TransactionAPIView.as_view(), name="transactions")
+    path("transactions/", TransactionListAPIView.as_view(), name="transactions")
 ]
 
 
