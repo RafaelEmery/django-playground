@@ -5,11 +5,23 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import ListAPIView, ListCreateAPIView
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT, HTTP_404_NOT_FOUND
+from rest_framework.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_404_NOT_FOUND,
+)
 from rest_framework.views import APIView
 
 from .models import Balance, Customer, Transaction
-from .serializers import BalanceSerializer, CustomerSerializer, TransactionSerializer
+from .serializers import (
+    BalanceSerializer,
+    CustomerSerializer,
+    TransactionProcessRequestSerializer,
+    TransactionProcessResponseSerializer,
+    TransactionSerializer,
+)
+from .services import TransactionService
 
 
 class CustomerListCreateAPIView(ListCreateAPIView):
@@ -89,6 +101,21 @@ class TransactionListAPIView(ListAPIView):
     filterset_fields = ["status", "method", "expected_fee"]
     ordering_fields = ["value", "created_at"]
 
+
+class TransactionProcessAPIView(APIView):
+    def post(self, request):
+        serializer = TransactionProcessRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        logging.info(
+            f"[payments] process transaction started: customer {request.data.get('customer_id')}"
+        )
+
+        service = TransactionService()
+        result = service.process(data=serializer)
+        response = TransactionProcessResponseSerializer(result)
+
+        return Response(status=HTTP_200_OK, data=response.data)
 
 
 

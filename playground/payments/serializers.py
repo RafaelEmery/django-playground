@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .enums import CustomerType
+from .enums import CustomerType, Status, TransactionMethod
 from .models import Balance, Customer, Transaction
 from .utils import is_valid_cnpj, is_valid_cpf
 
@@ -54,3 +54,25 @@ class TransactionSerializer(serializers.ModelSerializer):
             "expected_fee",
             "created_at"
         ]
+
+
+class TransactionProcessRequestSerializer(serializers.Serializer):
+    """
+    Receives and validate transaction process request.
+    """
+    customer_id = serializers.CharField()
+    value = serializers.FloatField(min_value=0.01, max_value=1000000.00)
+    description = serializers.CharField(max_length=255)
+    method = serializers.ChoiceField(choices=TransactionMethod)
+    card_number = serializers.CharField()
+    card_owner = serializers.CharField(max_length=100)
+    card_expiration_year = serializers.CharField()
+    card_verification_code = serializers.CharField(max_length=3)
+
+
+class TransactionProcessResponseSerializer(serializers.Serializer):
+    """
+    Returns transaction process response with current status.
+    """
+    id = serializers.CharField()
+    status = serializers.ChoiceField(choices=[Status.PROCESSED, Status.FAILED])
