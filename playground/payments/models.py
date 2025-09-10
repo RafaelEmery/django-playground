@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from .enums import Currency, CustomerType, Status, TransactionMethod
+from .enums import Currency, CustomerType, PayableStatus, TransactionMethod, TransactionStatus
 
 
 class BaseModel(models.Model):
@@ -33,9 +33,9 @@ class Transaction(BaseModel):
     currency = models.CharField(choices=Currency, default=Currency.BRL)
     description = models.CharField(max_length=255)
     method = models.CharField(choices=TransactionMethod)
-    status = models.CharField(choices=Status, default=Status.PENDING)
+    status = models.CharField(choices=TransactionStatus, default=TransactionStatus.PENDING)
     expected_fee = models.DecimalField(max_digits=4, decimal_places=2)
-    card_number = models.CharField()
+    card_number = models.CharField(max_length=20)
     card_owner = models.CharField(max_length=100)
     card_expiration_date = models.DateTimeField()
     card_verification_code = models.CharField(max_length=3)
@@ -61,8 +61,9 @@ class Payable(BaseModel):
         related_query_name="payable",
         on_delete=models.CASCADE
     )
+    amount = models.DecimalField(max_digits=9, decimal_places=2, default=0.0)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
-    status = models.CharField(choices=Status, default=Status.PENDING)
+    status = models.CharField(choices=PayableStatus)
     payment_date = models.DateTimeField()
 
     class Meta:

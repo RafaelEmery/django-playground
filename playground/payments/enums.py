@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import Enum, StrEnum
 
 from django.db.models import TextChoices
 
@@ -22,10 +22,14 @@ class TransactionMethod(TextChoices):
     DEBIT = "debit_card"
 
 
-class Status(TextChoices):
+class TransactionStatus(TextChoices):
     PROCESSED = "processed"
     FAILED = "failed"
     PENDING = "pending"
+
+
+class PayableStatus(TextChoices):
+    PAID = "paid"
     WAITING_FUNDS = "waiting_funds"
 
 
@@ -33,6 +37,12 @@ class CustomerType(TextChoices):
     INDIVIDUAL = "individual"
     CORPORATE = "corporate"
 
+
 class DocumentType(StrEnum):
     CPF = "CPF"
     CNPJ = "CNPJ"
+
+
+class ExpectedFees(float, Enum):
+    CREDIT_CARD = 0.05
+    DEBIT_CARD = 0.03

@@ -5,6 +5,7 @@ import re
 def clean_document_number(value: str) -> str:
     return re.sub(r"[^0-9]", "", value)
 
+
 def is_valid_cpf(cpf: str) -> bool:
     cpf = clean_document_number(cpf)
     if len(cpf) != 11 or cpf == cpf[0] * 11:
@@ -15,6 +16,7 @@ def is_valid_cpf(cpf: str) -> bool:
         if int(cpf[i]) != d:
             return False
     return True
+
 
 def is_valid_cnpj(cnpj: str) -> bool:
     cnpj = clean_document_number(cnpj)
@@ -29,3 +31,7 @@ def is_valid_cnpj(cnpj: str) -> bool:
         if int(cnpj[12 + i]) != d:
             return False
     return True
+
+
+def get_last_digits(card_number: str) -> str:
+    return card_number[-4:]

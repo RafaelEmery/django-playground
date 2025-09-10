@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .enums import CustomerType, Status, TransactionMethod
+from .enums import CustomerType, TransactionMethod, TransactionStatus
 from .models import Balance, Customer, Transaction
 from .utils import is_valid_cnpj, is_valid_cpf
 
@@ -75,4 +75,6 @@ class TransactionProcessResponseSerializer(serializers.Serializer):
     Returns transaction process response with current status.
     """
     id = serializers.CharField()
-    status = serializers.ChoiceField(choices=[Status.PROCESSED, Status.FAILED])
+    status = serializers.ChoiceField(
+        choices=[TransactionStatus.PROCESSED, TransactionStatus.FAILED]
+    )

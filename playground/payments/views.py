@@ -111,9 +111,22 @@ class TransactionProcessAPIView(APIView):
             f"[payments] process transaction started: customer {request.data.get('customer_id')}"
         )
 
-        service = TransactionService()
-        result = service.process(data=serializer)
-        response = TransactionProcessResponseSerializer(result)
+        try:
+            service = TransactionService()
+            result = service.process(data=serializer)
+            response = TransactionProcessResponseSerializer(result)
+
+            logging.info(
+                "[payments] process transaction finished: "
+                f"id - {response.data.get('id')} | "
+                f"status - {response.data.get('status')}"
+            )
+        except Exception as e:
+            logging.error(
+                "[payments] process transaction error: "
+                f"customer_id - {request.data.get('customer_id')} |"
+                f"error - {str(e)}"
+            )
 
         return Response(status=HTTP_200_OK, data=response.data)
 
