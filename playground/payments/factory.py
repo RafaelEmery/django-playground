@@ -1,7 +1,9 @@
 import logging
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from decimal import Decimal
+
+from django.utils import timezone
 
 from .enums import ExpectedFees, PayableStatus, TransactionMethod, TransactionStatus
 from .models import BalanceHistory, Customer, Payable
@@ -69,7 +71,7 @@ class CreditCardTransaction(Transaction):
 
         logging.info(
             f"[payments] transaction {transaction.id} processed as credit_card; "
-            f"Fee applied {transaction.expected_fee}; "
+            f"Fee applied {transaction.expected_fee.value}; "
             f"Payment will be available at {self.payment_date}."
         )
 
@@ -110,5 +112,5 @@ class DebitCardTransaction(Transaction):
 
         logging.info(
             f"[payments] transaction {transaction.id} processed as debit_card; "
-            f"Fee applied {transaction.expected_fee}. "
+            f"Fee applied {transaction.expected_fee.value}. "
         )

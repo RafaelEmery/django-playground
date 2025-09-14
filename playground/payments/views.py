@@ -126,7 +126,7 @@ class TransactionProcessAPIView(APIView):
         except Exception as e:
             logging.error(
                 "[payments] process transaction error: "
-                f"customer_id - {request.data.get('customer_id')} |"
+                f"customer_id - {request.data.get('customer_id')} | "
                 f"error - {str(e)}"
             )
             response = TransactionProcessResponseSerializer(data={
