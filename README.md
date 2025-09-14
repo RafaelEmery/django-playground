@@ -54,6 +54,12 @@ To run APIs on port `8000`:
 make run
 ```
 
+After running you can validate if it's ok call `ping`:
+
+```
+curl --location 'http://localhost:8000/ping/'
+```
+
 #### Applying migrations
 
 To apply all migrations:
