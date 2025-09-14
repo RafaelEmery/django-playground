@@ -29,6 +29,12 @@ Payload:
 }
 ```
 
+#### Diagram
+
+![payments-transaction-flow](/images/payments-transaction-flow.png)
+
+#### Factory
+
 Uses [Factory](https://github.com/RafaelEmery/django-playground/blob/master/playground/payments/factory.py) to define a `credit_card` and `debit_card` transaction :pill:
 
 ```python
