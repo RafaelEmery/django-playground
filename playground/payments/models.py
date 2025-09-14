@@ -37,7 +37,7 @@ class Transaction(BaseModel):
     expected_fee = models.DecimalField(max_digits=4, decimal_places=2)
     card_number = models.CharField(max_length=20)
     card_owner = models.CharField(max_length=100)
-    card_expiration_date = models.DateTimeField()
+    card_expiration_year = models.CharField(max_length=4, null=True) # noqa: DJ001
     card_verification_code = models.CharField(max_length=3)
 
     class Meta:

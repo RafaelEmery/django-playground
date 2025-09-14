@@ -7,17 +7,16 @@ from .enums import Currency, TransactionStatus
 from .factory import Transaction as TransactionABC
 from .factory import TransactionFactory
 from .models import Balance, Customer, Payable, Transaction
-from .serializers import TransactionProcessRequestSerializer
 
 
 class TransactionService:
-    def process(self, data: TransactionProcessRequestSerializer) -> dict[str, str]:
+    def process(self, data: dict) -> dict[str, str]:
         """
         Process a transaction and applies specific rules.
         Returns transaction_id and status.
         If the transaction fails, client receives a failed status response.
         """
-        customer: Customer = self._get_customer_with_balance(data.customer_id)
+        customer: Customer = self._get_customer_with_balance(data["customer_id"])
         transaction: Transaction = self._create_pending_transaction(data)
         logging.info(f"[payments] pending transaction created for {customer.id}")
 
@@ -27,9 +26,9 @@ class TransactionService:
         factory.apply_payable_on_balance(payable, customer)
         factory.finish_transaction(transaction)
 
-        return {"id": transaction.id, "status": TransactionStatus.PROCESSED}
+        return {"customer_id": data["customer_id"], "status": TransactionStatus.PROCESSED}
 
-    def _create_pending_transaction(self, data: TransactionProcessRequestSerializer) -> Transaction:
+    def _create_pending_transaction(self, data: dict) -> Transaction:
         default_expected_fee = 0.0
         return Transaction.objects.create(
             value=data["value"],
@@ -40,7 +39,7 @@ class TransactionService:
             expected_fee=default_expected_fee,
             card_number=data["card_number"],
             card_owner=data["card_owner"],
-            card_expiration_date=data["card_expiration_date"],
+            card_expiration_year=data["card_expiration_year"],
             card_verification_code=data["card_verification_code"],
         )
 

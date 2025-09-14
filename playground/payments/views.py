@@ -10,9 +10,11 @@ from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
     HTTP_404_NOT_FOUND,
+    HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from rest_framework.views import APIView
 
+from .enums import TransactionStatus
 from .models import Balance, Customer, Transaction
 from .serializers import (
     BalanceSerializer,
@@ -113,12 +115,12 @@ class TransactionProcessAPIView(APIView):
 
         try:
             service = TransactionService()
-            result = service.process(data=serializer)
+            result = service.process(data=serializer.validated_data)
             response = TransactionProcessResponseSerializer(result)
 
             logging.info(
                 "[payments] process transaction finished: "
-                f"id - {response.data.get('id')} | "
+                f"customer_id - {response.data.get('customer_id')} | "
                 f"status - {response.data.get('status')}"
             )
         except Exception as e:
@@ -127,6 +129,11 @@ class TransactionProcessAPIView(APIView):
                 f"customer_id - {request.data.get('customer_id')} |"
                 f"error - {str(e)}"
             )
+            response = TransactionProcessResponseSerializer(data={
+                "customer_id": request.data.get("customer_id"), "status": TransactionStatus.FAILED
+            })
+            response.is_valid(raise_exception=True)
+            return Response(status=HTTP_500_INTERNAL_SERVER_ERROR, data=response.data)
 
         return Response(status=HTTP_200_OK, data=response.data)
 

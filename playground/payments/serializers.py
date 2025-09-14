@@ -66,7 +66,7 @@ class TransactionProcessRequestSerializer(serializers.Serializer):
     method = serializers.ChoiceField(choices=TransactionMethod)
     card_number = serializers.CharField()
     card_owner = serializers.CharField(max_length=100)
-    card_expiration_year = serializers.CharField()
+    card_expiration_year = serializers.CharField(max_length=4)
     card_verification_code = serializers.CharField(max_length=3)
 
 
@@ -74,7 +74,7 @@ class TransactionProcessResponseSerializer(serializers.Serializer):
     """
     Returns transaction process response with current status.
     """
-    id = serializers.CharField()
+    customer_id = serializers.CharField()
     status = serializers.ChoiceField(
         choices=[TransactionStatus.PROCESSED, TransactionStatus.FAILED]
     )

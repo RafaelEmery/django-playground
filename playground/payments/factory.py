@@ -1,6 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from decimal import Decimal
 
 from .enums import ExpectedFees, PayableStatus, TransactionMethod, TransactionStatus
 from .models import BalanceHistory, Customer, Payable
@@ -40,10 +41,10 @@ class CreditCardTransaction(Transaction):
     def __init__(self):
         self.payable_status = PayableStatus.WAITING_FUNDS
         self.expected_fee = ExpectedFees.CREDIT_CARD
-        self.payment_date = datetime.now() + timedelta(days=30)
+        self.payment_date = timezone.now() + timedelta(days=30)
 
     def create_payable(self, transaction: TransactionModel, customer: Customer) -> Payable:
-            calculated_amount = transaction.value * self.expected_fee
+            calculated_amount = transaction.value - (transaction.value * self.expected_fee)
             return Payable.objects.create(
                 transaction=transaction,
                 customer=customer,
@@ -58,7 +59,7 @@ class CreditCardTransaction(Transaction):
             available=customer.balance.available,
             waiting_funds=customer.balance.waiting_funds,
         )
-        customer.balance.waiting_funds += payable.amount
+        customer.balance.waiting_funds += Decimal(payable.amount)
         customer.balance.save()
 
     def finish_transaction(self, transaction: TransactionModel) -> None:
@@ -67,8 +68,9 @@ class CreditCardTransaction(Transaction):
         transaction.save()
 
         logging.info(
-            f"[payments] transaction {transaction.id} processed as credit_card. "
-            f"Payment will be available at {self.payment_date}"
+            f"[payments] transaction {transaction.id} processed as credit_card; "
+            f"Fee applied {transaction.expected_fee}; "
+            f"Payment will be available at {self.payment_date}."
         )
 
 
@@ -80,10 +82,10 @@ class DebitCardTransaction(Transaction):
     def __init__(self):
         self.payable_status = PayableStatus.PAID
         self.expected_fee = ExpectedFees.DEBIT_CARD
-        self.payment_date = datetime.now()
+        self.payment_date = timezone.now()
 
     def create_payable(self, transaction: TransactionModel, customer: Customer) -> Payable:
-        calculated_amount = transaction.value * self.expected_fee
+        calculated_amount = transaction.value - (transaction.value * self.expected_fee)
         return Payable.objects.create(
             transaction=transaction,
             customer=customer,
@@ -98,7 +100,7 @@ class DebitCardTransaction(Transaction):
             available=customer.balance.available,
             waiting_funds=customer.balance.waiting_funds,
         )
-        customer.balance.available += payable.amount
+        customer.balance.available += Decimal(payable.amount)
         customer.balance.save()
 
     def finish_transaction(self, transaction: TransactionModel) -> None:
@@ -106,4 +108,7 @@ class DebitCardTransaction(Transaction):
         transaction.expected_fee = self.expected_fee
         transaction.save()
 
-        logging.info(f"[payments] transaction {transaction.id} processed as debit_card")
+        logging.info(
+            f"[payments] transaction {transaction.id} processed as debit_card; "
+            f"Fee applied {transaction.expected_fee}. "
+        )
