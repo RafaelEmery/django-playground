@@ -13,7 +13,9 @@ dependencies = [
     "psycopg2-binary (>=2.9.10,<3.0.0)",
     "python-dotenv (>=1.1.1,<2.0.0)",
     "drf-yasg (>=1.21.10,<2.0.0)",
-    "django-filter (>=25.1,<26.0)"
+    "django-filter (>=25.1,<26.0)",
+    "pytest (>=8.4.2,<9.0.0)",
+    "pytest-django (>=4.11.1,<5.0.0)"
 ]
 
 
@@ -24,9 +26,15 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.2.0"
 ruff = "^0.12.7"
+factory-boy = "^3.3.3"
+pytest-cov = "^7.0.0"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "playground.settings"
+norecursedirs = ["data"]
 
 [tool.ruff]
-select = [
+lint.select = [
     "E",    #	pycodestyle errors
     "F",    #	pyflakes errors (unused imports, variables, etc)
     "W",    #	pycodestyle warnings
@@ -43,9 +51,12 @@ select = [
     "PL",   #	Pylint rules
     "SIM"   #	Code simplification (flake8-simplify)
 ]
-ignore = []
+lint.ignore = []
 line-length = 100
 target-version = "py311"
+
+[tool.ruff.lint.per-file-ignores]
+"playground/payments/tests/*" = ["S101", "PLR0913", "PT006"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"

@@ -100,7 +100,7 @@ class TransactionListAPIView(ListAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ["status", "method", "expected_fee"]
+    filterset_fields = ["status", "method"]
     ordering_fields = ["value", "created_at"]
 
 
