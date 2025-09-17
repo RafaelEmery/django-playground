@@ -271,6 +271,25 @@ def test_process_transaction_failed_not_found(method):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("method", [TransactionMethod.CREDIT, TransactionMethod.DEBIT])
+def test_process_transaction_failed_balance_not_found(customer, method):
+    request_data = {
+        "customer_id": customer.id,
+        "value": 10.0,
+        "description": "E no Rio não tem outro igual! Só o Flamengo é campeão mundial!",
+        "method": method,
+        "card_number": "Zico",
+        "card_owner": "Leovegildo Júnior",
+        "card_expiration_year": "2028",
+        "card_verification_code": "123",
+    }
+    client = APIClient()
+    response = client.post("/api/v1/payments/transactions/process/", data=request_data)
+
+    assert response.status_code == HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     ("method", "factory_class"),
     [
