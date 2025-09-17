@@ -1,8 +1,8 @@
 import pytest
 
-from payments.enums import TransactionMethod, TransactionStatus
+from payments.enums import CustomerType, TransactionMethod, TransactionStatus
 
-from .factories import TransactionFactory
+from .factories import BalanceFactory, CustomerFactory, TransactionFactory
 
 
 @pytest.fixture
@@ -86,3 +86,43 @@ def processed_debit_transactions(debit_transactions_quantity):
         method=TransactionMethod.DEBIT,
         status=TransactionStatus.PROCESSED
     )
+
+
+@pytest.fixture
+def individual_customers_quantity():
+    return 5
+
+
+@pytest.fixture
+def individual_customers(individual_customers_quantity):
+    return CustomerFactory.create_batch(individual_customers_quantity)
+
+
+@pytest.fixture
+def corporate_customers_quantity():
+    return 3
+
+
+@pytest.fixture
+def corporate_customers(corporate_customers_quantity):
+    return CustomerFactory.create_batch(corporate_customers_quantity, type=CustomerType.CORPORATE)
+
+
+@pytest.fixture
+def customer():
+    return CustomerFactory.create()
+
+
+@pytest.fixture
+def customer_with_balance():
+    return BalanceFactory.create().customer
+
+
+@pytest.fixture
+def inactive_customer():
+    return CustomerFactory.create(active=False)
+
+
+@pytest.fixture
+def balance():
+    return BalanceFactory.create()

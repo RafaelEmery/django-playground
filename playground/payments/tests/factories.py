@@ -1,10 +1,10 @@
 from decimal import Decimal
 
-from factory import Faker
+from factory import Faker, SubFactory
 from factory.django import DjangoModelFactory
 
-from payments.enums import Currency, TransactionMethod, TransactionStatus
-from payments.models import Transaction
+from payments.enums import Currency, CustomerType, TransactionMethod, TransactionStatus
+from payments.models import Balance, Customer, Transaction
 
 
 class TransactionFactory(DjangoModelFactory):
@@ -21,3 +21,21 @@ class TransactionFactory(DjangoModelFactory):
 
     class Meta:
         model = Transaction
+
+
+class CustomerFactory(DjangoModelFactory):
+    name = Faker("name")
+    type = CustomerType.INDIVIDUAL
+    document_number = Faker("bothify", text="####################")
+
+    class Meta:
+        model = Customer
+
+
+class BalanceFactory(DjangoModelFactory):
+    available = 1000.00
+    waiting_funds = 0.00
+    customer = SubFactory(CustomerFactory)
+
+    class Meta:
+        model = Balance

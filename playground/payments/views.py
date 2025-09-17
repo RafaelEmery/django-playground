@@ -78,6 +78,7 @@ class CustomerDetailAPIView(APIView):
 
         return Response(status=HTTP_204_NO_CONTENT)
 
+
 class CustomerBalanceAPIView(APIView):
     def get(self, request, id):
         balance = Balance.objects.filter(customer__id=id).first()
