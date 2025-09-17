@@ -115,6 +115,10 @@ def customer():
 
 @pytest.fixture
 def customer_with_balance():
+    """
+    Create a customer with an associated balance.
+    With default values for available = 1000.00 and waiting_funds = 0.00
+    """
     return BalanceFactory.create().customer
 
 
