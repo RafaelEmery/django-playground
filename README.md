@@ -12,6 +12,18 @@ Repository to build and practice Python, Django and a lot of other stuffs :hamme
 
 ## :running: Running locally
 
+#### Installing Python
+
+Using `pyenv`:
+
+```bash
+pyenv install 3.12
+
+pyenv virtualenv 3.12 django-playground
+
+pyenv activate django-playground
+```
+
 #### Handling containers and environment
 
 Copy `.env` file
