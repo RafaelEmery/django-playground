@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 from factory.faker import Faker
 from rest_framework.status import (
@@ -11,6 +13,7 @@ from rest_framework.status import (
 from rest_framework.test import APIClient
 
 from payments.enums import CustomerType, TransactionMethod, TransactionStatus
+from payments.factory import CreditCardTransaction, DebitCardTransaction
 from payments.serializers import BalanceSerializer, CustomerSerializer
 
 
@@ -250,7 +253,7 @@ def test_process_transaction_validation_error(customer_with_balance):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("method", [TransactionMethod.CREDIT, TransactionMethod.DEBIT])
-def test_process_transaction_failed(method):
+def test_process_transaction_failed_not_found(method):
     request_data = {
         "customer_id": "d9d7729b-dd03-46fe-ae79-bf1c49428efe",
         "value": 10.0,
@@ -263,6 +266,36 @@ def test_process_transaction_failed(method):
     }
     client = APIClient()
     response = client.post("/api/v1/payments/transactions/process/", data=request_data)
+
+    assert response.status_code == HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("method", "factory_class"),
+    [
+        (TransactionMethod.CREDIT, CreditCardTransaction),
+        (TransactionMethod.DEBIT, DebitCardTransaction)
+    ]
+)
+def test_process_transaction_failed_transaction_error(customer_with_balance, method, factory_class):
+    request_data = {
+        "customer_id": customer_with_balance.id,
+        "value": 10.0,
+        "description": "E agora seu povo! Pede o mundo de novo! Da-lhe da-lhe da-lhe Mengo! Pra cima deles Flamengo!", # noqa: E501
+        "method": method,
+        "card_number": "Obina",
+        "card_owner": "Adriano Imperador",
+        "card_expiration_year": "2028",
+        "card_verification_code": "123",
+    }
+    with patch.object(
+        factory_class,
+        "apply_payable_on_balance",
+        side_effect=Exception("Palmeiras não tem mundial")
+    ):
+        client = APIClient()
+        response = client.post("/api/v1/payments/transactions/process/", data=request_data)
 
     assert response.status_code == HTTP_500_INTERNAL_SERVER_ERROR
     assert response.data["status"] == TransactionStatus.FAILED
