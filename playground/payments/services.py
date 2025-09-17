@@ -39,7 +39,7 @@ class TransactionService:
             raise TransactionFailedError(
                 f"Transaction creation failed: {err}"
             ) from err
-        except TransactionFailedError as err:
+        except Exception as err:
             factory.fail_transaction(transaction)
             raise TransactionFailedError(
                 f"Transaction processing failed: {err}"
@@ -63,7 +63,7 @@ class TransactionService:
                 card_verification_code=data["card_verification_code"],
             )
         except Exception as err:
-            raise TransactionFailedError(
+            raise TransactionCreationError(
                 f"[payments.service] Failed to create pending transaction: {err}"
             ) from err
 
