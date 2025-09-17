@@ -10,3 +10,4 @@ data/
 
 .env
 general.log
+.coverage

@@ -31,7 +31,3 @@ def is_valid_cnpj(cnpj: str) -> bool:
         if int(cnpj[12 + i]) != d:
             return False
     return True
-
-
-def get_last_digits(card_number: str) -> str:
-    return card_number[-4:]
