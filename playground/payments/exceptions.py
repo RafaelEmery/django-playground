@@ -1,5 +1,10 @@
-class NotFoundError(Exception):
+class TransactionRelatedEntityNotFoundError(Exception):
     """Exception raised for not found resources."""
+    pass
+
+
+class TransactionCreationError(Exception):
+    """Exception raised for errors during pending transaction creation."""
     pass
 
 

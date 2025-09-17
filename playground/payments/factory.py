@@ -23,6 +23,10 @@ class Transaction(ABC):
     def finish_transaction(self, transaction: TransactionModel) -> None:
         pass
 
+    @abstractmethod
+    def fail_transaction(self, transaction: TransactionModel) -> None:
+        pass
+
 
 class TransactionFactory:
     @staticmethod
@@ -75,6 +79,12 @@ class CreditCardTransaction(Transaction):
             f"Payment will be available at {self.payment_date}."
         )
 
+    def fail_transaction(self, transaction: TransactionModel) -> None:
+        logging.info(f"[payments] transaction {transaction.id} failed.")
+
+        transaction.status = TransactionStatus.FAILED
+        transaction.save()
+
 
 class DebitCardTransaction(Transaction):
     payable_status: str
@@ -114,3 +124,9 @@ class DebitCardTransaction(Transaction):
             f"[payments] transaction {transaction.id} processed as debit_card; "
             f"Fee applied {transaction.expected_fee.value}. "
         )
+
+    def fail_transaction(self, transaction: TransactionModel) -> None:
+        logging.info(f"[payments] transaction {transaction.id} failed.")
+
+        transaction.status = TransactionStatus.FAILED
+        transaction.save()

@@ -15,7 +15,7 @@ from rest_framework.status import (
 from rest_framework.views import APIView
 
 from .enums import TransactionStatus
-from .exceptions import NotFoundError
+from .exceptions import TransactionRelatedEntityNotFoundError
 from .models import Balance, Customer, Transaction
 from .serializers import (
     BalanceSerializer,
@@ -125,7 +125,7 @@ class TransactionProcessAPIView(APIView):
                 f"customer_id - {response.data.get('customer_id')} | "
                 f"status - {response.data.get('status')}"
             )
-        except NotFoundError as e:
+        except TransactionRelatedEntityNotFoundError as e:
             logging.error(
                 "[payments] not found on process transaction: "
                 f"customer_id - {request.data.get('customer_id')} | "
