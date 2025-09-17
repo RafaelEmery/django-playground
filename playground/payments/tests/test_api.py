@@ -6,6 +6,7 @@ from rest_framework.status import (
     HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
+    HTTP_500_INTERNAL_SERVER_ERROR,
 )
 from rest_framework.test import APIClient
 
@@ -207,3 +208,61 @@ def test_get_balance_by_customer_not_found():
     response = client.get("/api/v1/payments/customers/999999/balance/")
 
     assert response.status_code == HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("method", [TransactionMethod.CREDIT, TransactionMethod.DEBIT])
+def test_process_transaction_success(customer_with_balance, method):
+    request_data = {
+        "customer_id": customer_with_balance.id,
+        "value": 10.0,
+        "description": "Em Dezembro de 81, botou os ingleses na roda!",
+        "method": method,
+        "card_number": "Arrascaeta",
+        "card_owner": "Bruno Henrique",
+        "card_expiration_year": "2028",
+        "card_verification_code": "123",
+    }
+    client = APIClient()
+    response = client.post("/api/v1/payments/transactions/process/", data=request_data)
+
+    assert response.status_code == HTTP_200_OK
+    assert response.data["status"] == TransactionStatus.PROCESSED
+
+
+@pytest.mark.django_db
+def test_process_transaction_validation_error(customer_with_balance):
+    request_data = {
+        "customer_id": customer_with_balance.id,
+        "value": 10.0,
+        "description": "3 a 0 no Liverpool! Ficou marcado na história!",
+        "method": "wrong_method",
+        "card_number": "Rodinei",
+        "card_owner": "Gabriel Barbosa",
+        "card_expiration_year": "2028",
+        "card_verification_code": "123",
+    }
+    client = APIClient()
+    response = client.post("/api/v1/payments/transactions/process/", data=request_data)
+
+    assert response.status_code == HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("method", [TransactionMethod.CREDIT, TransactionMethod.DEBIT])
+def test_process_transaction_failed(method):
+    request_data = {
+        "customer_id": "d9d7729b-dd03-46fe-ae79-bf1c49428efe",
+        "value": 10.0,
+        "description": "E no Rio não tem outro igual! Só o Flamengo é campeão mundial!",
+        "method": method,
+        "card_number": "Zico",
+        "card_owner": "Leovegildo Júnior",
+        "card_expiration_year": "2028",
+        "card_verification_code": "123",
+    }
+    client = APIClient()
+    response = client.post("/api/v1/payments/transactions/process/", data=request_data)
+
+    assert response.status_code == HTTP_500_INTERNAL_SERVER_ERROR
+    assert response.data["status"] == TransactionStatus.FAILED

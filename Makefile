@@ -44,4 +44,4 @@ migrate:
 test:
 	@echo "Running tests... 🧪"
 	@echo "Database container must be running... 🆙"
-	PYTHONPATH=playground poetry run pytest --cov=playground --cov-report=term-missing -v
+	PYTHONPATH=playground poetry run pytest --cov=playground --cov-report=term-missing -v $(t)
