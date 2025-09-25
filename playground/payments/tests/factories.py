@@ -1,10 +1,17 @@
+from datetime import date
 from decimal import Decimal
 
-from factory import Faker, SubFactory
+from factory import Faker, LazyFunction, SubFactory
 from factory.django import DjangoModelFactory
 
-from payments.enums import Currency, CustomerType, TransactionMethod, TransactionStatus
-from payments.models import Balance, Customer, Transaction
+from payments.enums import (
+    Currency,
+    CustomerType,
+    PayableStatus,
+    TransactionMethod,
+    TransactionStatus,
+)
+from payments.models import Balance, Customer, Payable, Transaction
 
 
 class TransactionFactory(DjangoModelFactory):
@@ -39,3 +46,14 @@ class BalanceFactory(DjangoModelFactory):
 
     class Meta:
         model = Balance
+
+
+class PayableFactory(DjangoModelFactory):
+    amount = 10.0
+    customer = SubFactory(CustomerFactory)
+    transaction = SubFactory(TransactionFactory)
+    status = PayableStatus.WAITING_FUNDS
+    payment_date = LazyFunction(date.today)
+
+    class Meta:
+        model = Payable

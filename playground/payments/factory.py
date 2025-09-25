@@ -74,13 +74,13 @@ class CreditCardTransaction(Transaction):
         transaction.save()
 
         logging.info(
-            f"[payments] transaction {transaction.id} processed as credit_card; "
+            f"[payments.factory] transaction {transaction.id} processed as credit_card; "
             f"Fee applied {transaction.expected_fee.value}; "
             f"Payment will be available at {self.payment_date}."
         )
 
     def fail_transaction(self, transaction: TransactionModel) -> None:
-        logging.info(f"[payments] transaction {transaction.id} failed.")
+        logging.info(f"[payments.factory] transaction {transaction.id} failed.")
 
         transaction.status = TransactionStatus.FAILED
         transaction.save()
@@ -121,12 +121,12 @@ class DebitCardTransaction(Transaction):
         transaction.save()
 
         logging.info(
-            f"[payments] transaction {transaction.id} processed as debit_card; "
+            f"[payments.factory] transaction {transaction.id} processed as debit_card; "
             f"Fee applied {transaction.expected_fee.value}. "
         )
 
     def fail_transaction(self, transaction: TransactionModel) -> None:
-        logging.info(f"[payments] transaction {transaction.id} failed.")
+        logging.info(f"[payments.factory] transaction {transaction.id} failed.")
 
         transaction.status = TransactionStatus.FAILED
         transaction.save()

@@ -11,3 +11,8 @@ class TransactionCreationError(Exception):
 class TransactionFailedError(Exception):
     """Exception raised for failed transactions."""
     pass
+
+
+class PayableScheduledError(Exception):
+    """Exception raised for error on scheduled payables."""
+    pass

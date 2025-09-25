@@ -1,8 +1,8 @@
 import pytest
 
-from payments.enums import CustomerType, TransactionMethod, TransactionStatus
+from payments.enums import CustomerType, PayableStatus, TransactionMethod, TransactionStatus
 
-from .factories import BalanceFactory, CustomerFactory, TransactionFactory
+from .factories import BalanceFactory, CustomerFactory, PayableFactory, TransactionFactory
 
 
 @pytest.fixture
@@ -117,10 +117,18 @@ def customer():
 def customer_with_balance():
     """
     Create a customer with an associated balance.
-    With default values for available = 1000.00 and waiting_funds = 0.00
+    With default values for available = 1000.00 and waiting_funds = 50.00
     """
     return BalanceFactory.create().customer
 
+
+@pytest.fixture
+def customer_with_balance_and_waiting_funds():
+    """
+    Create a customer with an associated balance.
+    With default values for available = 1000.00 and waiting_funds = 50.00
+    """
+    return BalanceFactory.create(waiting_funds=50.00).customer
 
 @pytest.fixture
 def inactive_customer():
@@ -130,3 +138,44 @@ def inactive_customer():
 @pytest.fixture
 def balance():
     return BalanceFactory.create()
+
+
+@pytest.fixture
+def waiting_funds_payables_quantity():
+    return 5
+
+
+@pytest.fixture
+def paid_payables_quantity():
+    return 5
+
+
+@pytest.fixture
+def waiting_funds_payables(
+    waiting_funds_payables_quantity, customer_with_balance_and_waiting_funds
+):
+    """
+    Create a waiting funds payable for default customer with 1000.00 balance
+    and 50.00 waiting_funds.
+    """
+    return PayableFactory.create_batch(
+        waiting_funds_payables_quantity,
+        customer=customer_with_balance_and_waiting_funds,
+    )
+
+
+@pytest.fixture
+def inactive_customer_waiting_funds_payables(waiting_funds_payables_quantity, inactive_customer):
+    return PayableFactory.create_batch(
+        waiting_funds_payables_quantity,
+        customer=inactive_customer,
+    )
+
+
+@pytest.fixture
+def paid_payables(paid_payables_quantity, customer_with_balance):
+    return PayableFactory.create_batch(
+        paid_payables_quantity,
+        status=PayableStatus.PAID,
+        customer=customer_with_balance,
+    )

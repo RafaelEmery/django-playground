@@ -1,9 +1,12 @@
 import logging
+from decimal import Decimal
 from uuid import UUID
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import QuerySet
+from django.utils import timezone
 
-from .enums import Currency, TransactionStatus
+from .enums import Currency, PayableStatus, TransactionStatus
 from .exceptions import (
     TransactionCreationError,
     TransactionFailedError,
@@ -11,7 +14,7 @@ from .exceptions import (
 )
 from .factory import Transaction as TransactionABC
 from .factory import TransactionFactory
-from .models import Balance, Customer, Payable, Transaction
+from .models import Balance, BalanceHistory, Customer, Payable, Transaction
 
 
 class TransactionService:
@@ -84,3 +87,46 @@ class TransactionService:
         customer.balance = balance
 
         return customer
+
+
+class PayableService:
+    def get_today_payables(self) -> QuerySet[Payable]:
+        today = timezone.now().date()
+        payables = Payable.objects.filter(
+            created_at__date=today,
+            status=PayableStatus.WAITING_FUNDS
+        )
+
+        return self._filter_inactive_customer_payables(payables)
+
+    def _filter_inactive_customer_payables(self, payables: Payable) -> QuerySet[Payable]:
+        inactive_customer_payables = payables.filter(customer__active=False)
+        if inactive_customer_payables:
+            inactive_customers = list(
+                inactive_customer_payables.values_list("customer_id", flat=True).distinct()
+            )
+            logging.info(
+                "[payments.service] payables for inactive customers are not considered | "
+                f"customer_ids: {inactive_customers}"
+            )
+
+            return payables.exclude(customer__active=False)
+        return payables
+
+    def apply_waiting_funds_payable(self, payable: Payable) -> None:
+        balance = payable.customer.balances.first()
+        BalanceHistory.objects.create(
+            balance=balance,
+            available=balance.available,
+            waiting_funds=balance.waiting_funds,
+        )
+        balance.available += Decimal(payable.amount)
+        balance.waiting_funds -= Decimal(payable.amount)
+        balance.save()
+
+        payable.status = PayableStatus.PAID
+        payable.save()
+
+        logging.info(
+            f"[payments.service] payable {payable.id} applied for {payable.customer.id}"
+        )

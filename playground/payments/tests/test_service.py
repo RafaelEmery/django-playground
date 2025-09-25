@@ -6,8 +6,8 @@ import pytest
 from payments.enums import ExpectedFees, PayableStatus, TransactionStatus
 from payments.exceptions import TransactionFailedError
 from payments.factory import CreditCardTransaction, DebitCardTransaction
-from payments.models import Balance, Transaction, TransactionMethod
-from payments.services import TransactionService
+from payments.models import Balance, Payable, Transaction, TransactionMethod
+from payments.services import PayableService, TransactionService
 
 
 @pytest.mark.django_db
@@ -108,3 +108,50 @@ def test_process_transaction_failure(customer_with_balance, method, factory_clas
 
         assert transaction is not None
         assert transaction.status == TransactionStatus.FAILED
+
+
+@pytest.mark.django_db
+def test_get_today_payables(waiting_funds_payables_quantity, waiting_funds_payables, paid_payables):
+    service = PayableService()
+    result = service.get_today_payables()
+
+    assert result.count() == waiting_funds_payables_quantity
+
+
+@pytest.mark.django_db
+def test_get_today_payables_filtering_inactive_customer_payables(
+    waiting_funds_payables_quantity,
+    waiting_funds_payables,
+    inactive_customer_waiting_funds_payables
+):
+    service = PayableService()
+    result = service.get_today_payables()
+
+    assert result.count() == waiting_funds_payables_quantity
+
+
+@pytest.mark.django_db
+def test_apply_waiting_funds_payable_customer_balance(
+    waiting_funds_payables_quantity, waiting_funds_payables
+):
+    service = PayableService()
+
+    for payable in waiting_funds_payables:
+        service.apply_waiting_funds_payable(payable)
+
+    payable_ids = [p.id for p in waiting_funds_payables]
+    payables = Payable.objects.filter(id__in=payable_ids)
+    customer = payables.first().customer
+    balance = Balance.objects.get(customer=customer)
+
+    expected_available = 1050.00
+    expected_balance_history_count = 5
+
+    assert balance.available == pytest.approx(expected_available)
+    assert balance.waiting_funds == pytest.approx(0)
+    assert balance.balance_historic.count() == expected_balance_history_count
+
+    for payable in payables:
+        assert payable.status == PayableStatus.PAID
+
+
