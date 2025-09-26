@@ -9,3 +9,9 @@ services:
       - "${DB_PORT}:5432"
     volumes:
       - ./data:/var/lib/postgresql/data
+    
+  playground-redis:
+    image: redis
+    command: redis-server
+    ports:
+      - "6379:6379"

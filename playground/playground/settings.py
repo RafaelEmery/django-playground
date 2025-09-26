@@ -166,3 +166,17 @@ LOGGING = {
         }
     },
 }
+
+CELERY_BROKER_URL = f"redis://{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/0"
+CELERY_RESULT_BACKEND = f"redis://{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}/1"
+CELERY_TIMEZONE = "America/Sao_Paulo"
+
+from celery.schedules import crontab  # noqa: E402
+
+CELERY_BEAT_SCHEDULE = {
+    "pay_daily_payables_and_make_people_happy_at_morning": {
+        "task": "payments.tasks.pay_daily_payables",
+        "schedule": crontab(hour=8, minute=0) if os.getenv("TEST_CELERY") else 5.0,
+        "args": (),
+    },
+}

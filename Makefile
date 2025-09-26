@@ -1,5 +1,9 @@
 .PHONY: all clean test
 
+clean-app-logs:
+	@echo "Removing general log file 🧹"
+	rm general.log
+
 lint:
 	@echo "Running linters... 🔍"
 	@poetry run ruff check
@@ -11,10 +15,6 @@ lint-fix:
 pre-commit-test:
 	@echo "Testing pre-commit hooks... 📡"
 	poetry run pre-commit run --all-files
-
-clean-app-logs:
-	@echo "Removing general log file 🧹"
-	rm general.log
 
 dep-start:
 	@echo "Starting containers... 🆙"
@@ -31,6 +31,11 @@ dep-down:
 run: dep-start
 	@echo "Running application... 🏆"
 	poetry run python playground/manage.py runserver
+
+celery: dep-start
+	@echo "Running Celery Worker and Beat... 🚴⏱️"
+	PYTHONPATH=playground celery -A playground worker --loglevel=info & \
+	PYTHONPATH=playground celery -A playground beat --loglevel=info
 
 shell:
 	poetry run python playground/manage.py shell

@@ -11,3 +11,6 @@ data/
 .env
 general.log
 .coverage
+
+celerybeat-schedule.*
+
