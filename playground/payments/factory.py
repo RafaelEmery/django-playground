@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from decimal import Decimal
 
+from django.db.transaction import atomic
 from django.utils import timezone
 
 from .enums import ExpectedFees, PayableStatus, TransactionMethod, TransactionStatus
@@ -59,6 +60,7 @@ class CreditCardTransaction(Transaction):
                 amount=calculated_amount
             )
 
+    @atomic
     def apply_payable_on_balance(self, payable: Payable, customer: Customer) -> None:
         BalanceHistory.objects.create(
             balance=customer.balance,
@@ -106,6 +108,7 @@ class DebitCardTransaction(Transaction):
             amount=calculated_amount
         )
 
+    @atomic
     def apply_payable_on_balance(self, payable: Payable, customer: Customer) -> None:
         BalanceHistory.objects.create(
             balance=customer.balance,

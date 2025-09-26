@@ -1,5 +1,6 @@
 import logging
 
+from django.db.transaction import atomic
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -42,8 +43,7 @@ class CustomerListCreateAPIView(ListCreateAPIView):
     search_fields = ["name"]
     ordering_fields = ["created_at"]
 
-    # TODO: validate and try to set transaction on customer and balance creation
-    # TODO: use signals/post_create or post_save function to create balance
+    @atomic
     def perform_create(self, serializer):
         """
         Creates a new customer with default balance.
@@ -68,7 +68,7 @@ class CustomerDetailAPIView(APIView):
 
         return Response(serializer.data)
 
-    # TODO: validate and try to set transaction on customer and balance deletion
+    @atomic
     def delete(self, request, id):
         customer = get_object_or_404(Customer, id=id)
         balance = get_object_or_404(Balance, customer=customer)

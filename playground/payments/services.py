@@ -4,6 +4,7 @@ from uuid import UUID
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import QuerySet
+from django.db.transaction import atomic
 from django.utils import timezone
 
 from .enums import Currency, PayableStatus, TransactionStatus
@@ -113,6 +114,7 @@ class PayableService:
             return payables.exclude(customer__active=False)
         return payables
 
+    @atomic
     def apply_waiting_funds_payable(self, payable: Payable) -> None:
         balance = payable.customer.balances.first()
         BalanceHistory.objects.create(

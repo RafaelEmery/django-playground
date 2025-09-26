@@ -14,6 +14,7 @@ from rest_framework.test import APIClient
 
 from payments.enums import CustomerType, TransactionMethod, TransactionStatus
 from payments.factory import CreditCardTransaction, DebitCardTransaction
+from payments.models import Customer
 from payments.serializers import BalanceSerializer, CustomerSerializer
 
 
@@ -110,6 +111,29 @@ def test_create_customer_and_balance_validating_type_and_document_number(
 
 
 @pytest.mark.django_db
+def test_rollback_when_create_customer_and_fail_balance_creation():
+    document_number = "207.227.310-27"
+    request_data = {
+        "name": Faker("name"),
+        "type": CustomerType.INDIVIDUAL,
+        "document_number": document_number,
+    }
+
+    with patch(
+        "payments.serializers.BalanceSerializer.save",
+        side_effect=Exception("Florminense")
+    ):
+        client = APIClient()
+        with pytest.raises(Exception, match="Florminense"): # noqa: PT012
+            response = client.post("/api/v1/payments/customers/", data=request_data)
+
+            assert response.status_code == HTTP_500_INTERNAL_SERVER_ERROR
+
+    customer = Customer.objects.filter(document_number=document_number).first()
+    assert customer is None
+
+
+@pytest.mark.django_db
 def test_list_customers(individual_customers_quantity, individual_customers):
     client = APIClient()
     response = client.get("/api/v1/payments/customers/")
@@ -185,6 +209,19 @@ def test_delete_customer_with_balance_customer_not_found():
     response = client.delete("/api/v1/payments/customers/999999/")
 
     assert response.status_code == HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db
+def test_rollback_when_delete_customer_with_balance_fail(customer_with_balance):
+    with patch("payments.models.Balance.delete", side_effect=Exception("Botaovo")):
+        client = APIClient()
+        with pytest.raises(Exception, match="Botaovo"): # noqa: PT012
+            response = client.delete(f"/api/v1/payments/customers/{customer_with_balance.id}/")
+
+            assert response.status_code == HTTP_500_INTERNAL_SERVER_ERROR
+
+        customer = Customer.objects.get(id=customer_with_balance.id)
+        assert customer is not None
 
 
 @pytest.mark.django_db
