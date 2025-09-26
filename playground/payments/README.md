@@ -62,3 +62,17 @@ class TransactionFactory:
         else:
             raise ValueError(f"Invalid transaction method: {method}")
 ```
+
+## Pay Cron Job
+
+Used Redis, Celery and Celery Beat to create a scheduled pay cron job. Run:
+
+```
+make celery
+```
+
+And use `TEST_CELERY=True` on `.env` to run on each 5 seconds.
+
+#### Diagram:
+
+![payments-schedule-flow](/images/payments-schedule-flow.png)

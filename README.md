@@ -7,7 +7,9 @@ Repository to build and practice Python, Django and a lot of other stuffs :hamme
 - Python
 - Poetry
 - Django and Django REST Framework
+- Celery
 - PostgreSQL
+- Redis
 - Docker and Docker Compose
 
 ## :running: Running locally
@@ -72,6 +74,8 @@ After running you can validate if it's ok call `ping`:
 curl --location 'http://localhost:8000/ping/'
 ```
 
+To run Celery, look at [payments docs](./playground/payments/README.md)
+
 #### Applying migrations
 
 To apply all migrations:
@@ -101,6 +105,20 @@ make pre-commit-test
 ```
 
 **Note:** There are pre-commit hooks defined for README files, `Makefile` and other config files, commit messages and `ruff` itself. [It was based on this Medium article](https://gatlenculp.medium.com/effortless-code-quality-the-ultimate-pre-commit-hooks-guide-for-2025-57ca501d9835)
+
+#### Testing
+
+To run tests:
+
+```
+make test
+```
+
+Or you can use the `test=some_test_path.py::some_test_case_name` to run only one test.
+
+The coverage is 94% :sparkles: :sparkles: :sparkles:
+
+![playground-coverage](./images/playgrounds-test-coverage.png)
 
 ## :open_file_folder: Applications
 
